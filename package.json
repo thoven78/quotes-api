@@ -1,0 +1,26 @@
+{
+  "name": "quotes-api",
+  "version": "1.0.0",
+  "description": "A Quote API that returns quotes/random and ETC",
+  "main": "server.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thoven78/quotes-api.git"
+  },
+  "keywords": [
+    "quotes"
+  ],
+  "author": "Stevenson Michel <thoven87@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thoven78/quotes-api/issues"
+  },
+  "homepage": "https://github.com/thoven78/quotes-api",
+  "dependencies": {
+    "hapi": "^8.4.0"
+  }
+}
