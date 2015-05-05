@@ -1,0 +1,154 @@
+{
+	"id": "d456f05f-7d3c-79e9-3a92-38466231a689",
+	"name": "Quotes API",
+	"description": "A Simple quotes API that retrives quotes from a server",
+	"order": [
+		"aaa9b121-5121-12e9-ec70-3d534cb6cb13",
+		"cb166d37-2f81-cd7a-b37d-863d8d9745d0",
+		"d5c1de6a-c85a-efdc-6fa6-9f51b98540fa",
+		"63d94269-5a96-02b9-da6a-d64bd2507954"
+	],
+	"folders": [],
+	"timestamp": 1430832212567,
+	"synced": false,
+	"owner": 0,
+	"sharedWithTeam": false,
+	"subscribed": false,
+	"remoteLink": "",
+	"public": false,
+	"write": true,
+	"requests": [
+		{
+			"id": "63d94269-5a96-02b9-da6a-d64bd2507954",
+			"headers": "",
+			"url": "http://localhost:4000/api/quotes",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "author",
+					"value": "Voltaire",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "text",
+					"value": "It is said that the present is pregnant with the future.",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1430833400694,
+			"name": "Create a quote",
+			"description": "create a quote",
+			"collectionId": "d456f05f-7d3c-79e9-3a92-38466231a689",
+			"responses": [],
+			"synced": false
+		},
+		{
+			"id": "aaa9b121-5121-12e9-ec70-3d534cb6cb13",
+			"headers": "",
+			"url": "http://localhost:4000/api/quotes",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [
+				{
+					"key": "author",
+					"value": "Voltaire",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "text",
+					"value": "It is said that the present is pregnant with the future.",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1430833438514,
+			"name": "Get quotes",
+			"description": "Get all quotes",
+			"collectionId": "d456f05f-7d3c-79e9-3a92-38466231a689",
+			"responses": [],
+			"synced": false
+		},
+		{
+			"id": "cb166d37-2f81-cd7a-b37d-863d8d9745d0",
+			"headers": "",
+			"url": "http://localhost:4000/api/quotes/1",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [
+				{
+					"key": "author",
+					"value": "Voltaire",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "text",
+					"value": "It is said that the present is pregnant with the future.",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1430833441521,
+			"name": "Get one quote",
+			"description": "Get one quote",
+			"collectionId": "d456f05f-7d3c-79e9-3a92-38466231a689",
+			"responses": [],
+			"synced": false
+		},
+		{
+			"id": "d5c1de6a-c85a-efdc-6fa6-9f51b98540fa",
+			"headers": "",
+			"url": "http://localhost:4000/api/quotes/random",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [
+				{
+					"key": "author",
+					"value": "Voltaire",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "text",
+					"value": "It is said that the present is pregnant with the future.",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1430833444890,
+			"name": "Get a random quote",
+			"description": "Get a random quote",
+			"collectionId": "d456f05f-7d3c-79e9-3a92-38466231a689",
+			"responses": [],
+			"synced": false
+		}
+	]
+}
