@@ -4,20 +4,7 @@ var Hapi = require('hapi');
 
 var server = new Hapi.Server();
 
-var quotes = [
-  {
-    author: 'Voltaire',
-    text: 'With great power comes great responsability'
-  },
-  {
-    author: 'Voltaire',
-    text: 'God gave us the gift of life; it is up to us to give ourselves the gift of living well.'
-  },
-  {
-    author: 'Voltaire',
-    text: 'It is difficult to free fools from the chains they revere.'
-  }
-];
+var quotes = require('../models/quote').quotes;
 
 server.connection({
   port: 4000
@@ -25,7 +12,7 @@ server.connection({
 
 server.route({
   method: 'GET',
-  path: '/quotes',
+  path: '/api/quotes',
   handler: function(request, reply) {
     reply(quotes);
   }
@@ -33,7 +20,7 @@ server.route({
 
 server.route({
   method: 'GET',
-  path: '/quotes/random',
+  path: '/api/quotes/random',
   handler: function(request, reply) {
     reply(quotes[Math.floor(Math.random() * quotes.length)]);
   }
@@ -41,9 +28,9 @@ server.route({
 
 server.route({
   method: 'GET',
-  path: '/quotes/{id}',
+  path: '/api/quotes/{id}',
   handler: function(request, reply) {
-    var quote = (quotes[+request.params.id] || {});
+    var quote = (quotes[+request.params.id - 1] || {});
     if (quote.author) {
       reply(quote);
     } else {
@@ -54,7 +41,7 @@ server.route({
 
 server.route({
   method: 'POST',
-  path: '/quotes',
+  path: '/api/quotes',
   handler: function(request, reply) {
     console.log(request.payload);
     reply('Not yet impleted');
