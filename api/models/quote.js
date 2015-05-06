@@ -1,14 +1,18 @@
-exports.quotes = [
-  {
-    author: 'Voltaire',
-    text: 'With great power comes great responsability'
+'use strict';
+
+var mongoose = require('mongoose');
+
+var Schema  = mongoose.Schema;
+
+var QuoteSchema = new Schema({
+  author: String,
+  text: String,
+  _creator: {
+    type: Schema.ObjectId,
+    ref: 'User'
   },
-  {
-    author: 'Voltaire',
-    text: 'God gave us the gift of life; it is up to us to give ourselves the gift of living well.'
-  },
-  {
-    author: 'Voltaire',
-    text: 'It is difficult to free fools from the chains they revere.'
-  }
-];
+  createdAt: Date,
+  updatedAt: Date
+});
+
+exports = mongoose.model('Quote', QuoteSchema);
