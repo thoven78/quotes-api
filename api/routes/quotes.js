@@ -4,7 +4,11 @@ var Hapi = require('hapi');
 
 var server = new Hapi.Server();
 
-var quotes = require('../models/quote').quotes;
+var Joi = require('joi');
+
+var quotes = []; //require('../models/quote').quotes;
+
+var Quote = require('mongoose').model('Quote');
 
 server.connection({
   port: 4000
@@ -14,7 +18,14 @@ server.route({
   method: 'GET',
   path: '/api/quotes',
   handler: function(request, reply) {
-    reply(quotes);
+    Quote.find(function(err, docs) {
+      if (err) {
+        return err;
+      }
+      reply({
+        quotes: docs
+      });
+    });
   }
 });
 
@@ -43,8 +54,83 @@ server.route({
   method: 'POST',
   path: '/api/quotes',
   handler: function(request, reply) {
-    console.log(request.payload);
-    reply('Not yet impleted');
+
+    if (!request.auth.isAuthenticated) {
+      return reply({
+        message: 'Not logged in.'
+      }).code(401);
+    }
+
+    var newQuote = {
+      author: request.payload.author,
+      text:  request.payload.text
+    };
+
+    if (!quotes.some(function(quote) {
+      return quote.author === newQuote.author && quote.text === newQuote.text;
+    })) {
+      quotes.push(newQuote);
+      return reply({quotes: quotes});
+    }
+
+    reply('Quote is already in the database').code(403);
+  },
+  config: {
+    validate: {
+      payload: {
+        author: Joi.string().required(),
+        text: Joi.string().required()
+      }
+    }
+  }
+});
+
+// Update a quote
+server.route({
+  method: 'PUT',
+  path: '/api/quotes/{id}',
+  handler: function(request, reply) {
+
+    if (!request.auth.isAuthenticated) {
+      return reply({
+        message: 'Not logged in'
+      }).code(401);
+    }
+
+    var newQuote = {
+      author: request.payload.author,
+      text: request.payload.text
+    };
+
+    // TODO add auth
+    quotes[+request.params.id] = newQuote;
+
+    reply({quote: newQuote});
+  },
+  config: {
+    validate: {
+      payload: {
+        author: Joi.string().required(),
+        text: Joi.string().required()
+      }
+    }
+  }
+});
+
+// Delete a quote
+server.route({
+  method: 'DELETE',
+  path: '/api/quotes/{id}',
+  handler: function(request, reply) {
+
+    if (!request.auth.isAuthenticated) {
+      return reply({
+        message: 'Not logged in'
+      }).code(401);
+    }
+
+    quotes.splice(+request.params.id, 1);
+    reply('success');
   }
 });
 
