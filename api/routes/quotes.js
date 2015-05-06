@@ -1,139 +1,130 @@
 'use strict';
 
-var Hapi = require('hapi');
-
-var server = new Hapi.Server();
-
 var Joi = require('joi');
 
 var quotes = []; //require('../models/quote').quotes;
 
 var Quote = require('mongoose').model('Quote');
 
-server.connection({
-  port: 4000
-});
+module.exports = function quotes(server) {
 
-server.route({
-  method: 'GET',
-  path: '/api/quotes',
-  handler: function(request, reply) {
-    Quote.find(function(err, docs) {
-      if (err) {
-        return err;
-      }
-      reply({
-        quotes: docs
+  server.route({
+    method: 'GET',
+    path: '/api/quotes',
+    handler: function(request, reply) {
+      Quote.find(function(err, docs) {
+        if (err) {
+          return err;
+        }
+        reply({
+          quotes: docs
+        });
       });
-    });
-  }
-});
-
-server.route({
-  method: 'GET',
-  path: '/api/quotes/random',
-  handler: function(request, reply) {
-    reply(quotes[Math.floor(Math.random() * quotes.length)]);
-  }
-});
-
-server.route({
-  method: 'GET',
-  path: '/api/quotes/{id}',
-  handler: function(request, reply) {
-    var quote = (quotes[+request.params.id - 1] || {});
-    if (quote.author) {
-      reply(quote);
-    } else {
-      reply('No quote found').code(404);
     }
-  }
-});
+  });
 
-server.route({
-  method: 'POST',
-  path: '/api/quotes',
-  handler: function(request, reply) {
-
-    if (!request.auth.isAuthenticated) {
-      return reply({
-        message: 'Not logged in.'
-      }).code(401);
+  server.route({
+    method: 'GET',
+    path: '/api/quotes/random',
+    handler: function(request, reply) {
+      reply(quotes[Math.floor(Math.random() * quotes.length)]);
     }
+  });
 
-    var newQuote = {
-      author: request.payload.author,
-      text:  request.payload.text
-    };
-
-    if (!quotes.some(function(quote) {
-      return quote.author === newQuote.author && quote.text === newQuote.text;
-    })) {
-      quotes.push(newQuote);
-      return reply({quotes: quotes});
-    }
-
-    reply('Quote is already in the database').code(403);
-  },
-  config: {
-    validate: {
-      payload: {
-        author: Joi.string().required(),
-        text: Joi.string().required()
+  server.route({
+    method: 'GET',
+    path: '/api/quotes/{id}',
+    handler: function(request, reply) {
+      var quote = (quotes[+request.params.id - 1] || {});
+      if (quote.author) {
+        reply(quote);
+      } else {
+        reply('No quote found').code(404);
       }
     }
-  }
-});
+  });
 
-// Update a quote
-server.route({
-  method: 'PUT',
-  path: '/api/quotes/{id}',
-  handler: function(request, reply) {
+  server.route({
+    method: 'POST',
+    path: '/api/quotes',
+    handler: function(request, reply) {
 
-    if (!request.auth.isAuthenticated) {
-      return reply({
-        message: 'Not logged in'
-      }).code(401);
-    }
+      if (!request.auth.isAuthenticated) {
+        return reply({
+          message: 'Not logged in.'
+        }).code(401);
+      }
 
-    var newQuote = {
-      author: request.payload.author,
-      text: request.payload.text
-    };
+      var newQuote = {
+        author: request.payload.author,
+        text:  request.payload.text
+      };
 
-    // TODO add auth
-    quotes[+request.params.id] = newQuote;
+      if (!quotes.some(function(quote) {
+        return quote.author === newQuote.author && quote.text === newQuote.text;
+      })) {
+        quotes.push(newQuote);
+        return reply({quotes: quotes});
+      }
 
-    reply({quote: newQuote});
-  },
-  config: {
-    validate: {
-      payload: {
-        author: Joi.string().required(),
-        text: Joi.string().required()
+      reply('Quote is already in the database').code(403);
+    },
+    config: {
+      validate: {
+        payload: {
+          author: Joi.string().required(),
+          text: Joi.string().required()
+        }
       }
     }
-  }
-});
+  });
 
-// Delete a quote
-server.route({
-  method: 'DELETE',
-  path: '/api/quotes/{id}',
-  handler: function(request, reply) {
+  // Update a quote
+  server.route({
+    method: 'PUT',
+    path: '/api/quotes/{id}',
+    handler: function(request, reply) {
 
-    if (!request.auth.isAuthenticated) {
-      return reply({
-        message: 'Not logged in'
-      }).code(401);
+      if (!request.auth.isAuthenticated) {
+        return reply({
+          message: 'Not logged in'
+        }).code(401);
+      }
+
+      var newQuote = {
+        author: request.payload.author,
+        text: request.payload.text
+      };
+
+      // TODO add auth
+      quotes[+request.params.id] = newQuote;
+
+      reply({quote: newQuote});
+    },
+    config: {
+      validate: {
+        payload: {
+          author: Joi.string().required(),
+          text: Joi.string().required()
+        }
+      }
     }
+  });
 
-    quotes.splice(+request.params.id, 1);
-    reply('success');
-  }
-});
+  // Delete a quote
+  server.route({
+    method: 'DELETE',
+    path: '/api/quotes/{id}',
+    handler: function(request, reply) {
 
-server.start(function() {
-  console.log('Server running at:', server.info.uri);
-});
+      if (!request.auth.isAuthenticated) {
+        return reply({
+          message: 'Not logged in'
+        }).code(401);
+      }
+
+      quotes.splice(+request.params.id, 1);
+      reply('success');
+    }
+  });
+};

@@ -1,11 +1,36 @@
 'use strict';
 
+var Hapi = require('hapi');
+
+var server = new Hapi.Server();
+
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/quotes');
+// Load the environment config
+var config = require(
+  './config/' + (process.ENV || 'development')
+);
 
-// Require the user model
+// Set up mongodb connection
+mongoose.connect(config.db);
+
+// Set server connection port
+server.connection({
+  port: (config.port || 4000)
+});
+
+// Require the models
 require('./api/models/user');
 require('./api/models/quote');
 
-require('./api/routes/quotes'); // The main API
+// Auth
+require('./api/routes/auth')(server);
+// Users
+require('./api/routes/users')(server);
+// Quotes
+require('./api/routes/quotes')(server);
+
+// Log were the serve is listening
+server.start(function() {
+  console.log('Server running at:', server.info.uri);
+});
