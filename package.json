@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "npm test",
-    "start": "node api/routes/quotes.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/thoven78/quotes-api",
   "dependencies": {
-    "hapi": "^8.4.0"
+    "hapi": "^8.4.0",
+    "joi": "^6.4.1",
+    "mongoose": "^4.0.2"
   }
 }
