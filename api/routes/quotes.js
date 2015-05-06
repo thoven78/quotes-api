@@ -2,8 +2,6 @@
 
 var Joi = require('joi');
 
-var quotes = []; //require('../models/quote').quotes;
-
 var Quote = require('mongoose').model('Quote');
 
 module.exports = function quotes(server) {
@@ -12,7 +10,8 @@ module.exports = function quotes(server) {
     method: 'GET',
     path: '/api/quotes',
     handler: function(request, reply) {
-      Quote.find(function(err, docs) {
+
+      Quote.find(function all(err, docs) {
         if (err) {
           return err;
         }
@@ -20,6 +19,7 @@ module.exports = function quotes(server) {
           quotes: docs
         });
       });
+
     }
   });
 
@@ -27,7 +27,17 @@ module.exports = function quotes(server) {
     method: 'GET',
     path: '/api/quotes/random',
     handler: function(request, reply) {
-      reply(quotes[Math.floor(Math.random() * quotes.length)]);
+
+      Quote.random(function random(err, doc) {
+
+        if (err) {
+          return reply('empty');
+        }
+
+        reply({
+          quote: doc
+        });
+      });
     }
   });
 
@@ -35,12 +45,16 @@ module.exports = function quotes(server) {
     method: 'GET',
     path: '/api/quotes/{id}',
     handler: function(request, reply) {
-      var quote = (quotes[+request.params.id - 1] || {});
-      if (quote.author) {
-        reply(quote);
-      } else {
-        reply('No quote found').code(404);
-      }
+
+      Quote.findOne({_id: request.params.id}, function findOne(err, doc) {
+        if (err) {
+          return reply('Not found').code(404);
+        }
+        reply({
+          quote: doc
+        })
+      });
+
     }
   });
 
@@ -57,23 +71,24 @@ module.exports = function quotes(server) {
 
       var newQuote = {
         author: request.payload.author,
-        text:  request.payload.text
+        text:  request.payload.text,
+        createdAt: new Date()
       };
-
-      if (!quotes.some(function(quote) {
-        return quote.author === newQuote.author && quote.text === newQuote.text;
-      })) {
-        quotes.push(newQuote);
-        return reply({quotes: quotes});
-      }
-
-      reply('Quote is already in the database').code(403);
+      // TODO grab the current user and assing it as the _creator
+      Quote.findOrCreate(newQuote, function findOrCreate(err, doc) {
+        if (err) {
+          return reply('Error').code(500);
+        }
+        reply({
+          quote: doc
+        });
+      });
     },
     config: {
       validate: {
         payload: {
-          author: Joi.string().required(),
-          text: Joi.string().required()
+          author: Joi.string().min(2).required(),
+          text: Joi.string().min(2).required()
         }
       }
     }
@@ -93,19 +108,28 @@ module.exports = function quotes(server) {
 
       var newQuote = {
         author: request.payload.author,
-        text: request.payload.text
+        text: request.payload.text,
+        updatedAt: new Date()
       };
 
-      // TODO add auth
-      quotes[+request.params.id] = newQuote;
+      Quote.findByIdAndUpdate(req.params.id, {$set: newQuote}, function findByIdAndUpdate(err, doc) {
 
-      reply({quote: newQuote});
+        if (err) {
+          return reply('Oops quote with id ' + req.params.id + ' does not exist');
+        }
+
+        reply({
+          quote: doc
+        });
+
+      });
+
     },
     config: {
       validate: {
         payload: {
-          author: Joi.string().required(),
-          text: Joi.string().required()
+          author: Joi.string().min(2).required(),
+          text: Joi.string().min(2).required()
         }
       }
     }
@@ -123,8 +147,16 @@ module.exports = function quotes(server) {
         }).code(401);
       }
 
-      quotes.splice(+request.params.id, 1);
-      reply('success');
+      Quote.remove({_id: req.params.id}, function
+        remove(err, doc) {
+        if (err) {
+          return reply({
+            message: 'Oops! quote was not found'
+          }).code(404);
+        }
+        reply('success');
+      });
+
     }
   });
 };
