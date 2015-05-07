@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/thoven78/quotes-api",
   "dependencies": {
+    "bcrypt": "^0.8.3",
     "bell": "^2.7.0",
     "hapi": "^8.4.0",
     "hapi-auth-cookie": "^2.2.0",

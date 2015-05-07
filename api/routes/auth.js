@@ -4,6 +4,8 @@ var Joi = require('joi');
 
 var User = require('mongoose').model('User');
 
+var bcrypt = require('bcrypt');
+
 var parseUserData = require('../components/parse-user-data');
 
 /**
@@ -45,7 +47,43 @@ module.exports = function(server) {
     method: 'POST',
     path: '/api/auth',
     handler: function(request, reply) {
-      // TODO require bcrypt
+
+      var user = {
+        email: (request.payload.email || '').trim()
+      };
+
+      User.findOne(user, function findOne(err, doc) {
+
+        if (err) {
+          reply({
+            message: 'No such user'
+          }).code(403);
+        }
+
+        var password = (request.payload.password || '').trim();
+
+        bcrypt.hash(password, doc.salt, function(err, hash) {
+
+          if (err) {
+            throw(err);
+          }
+
+          bcrypt.compare(hash, doc.password, function(err) {
+
+            if (err) {
+              return reply({
+                message: 'Wrong credentials combination'
+              }).code(404);
+            }
+
+            delete doc.password;
+            delete doc.salt;
+
+            request.auth.session.set(doc);
+          });
+        });
+
+      });
     },
     config: {
       validate: {
