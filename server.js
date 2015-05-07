@@ -10,7 +10,7 @@ var config = require(
 );
 
 // Load mongodb connection
-require('./api/db/mongo');
+require('./api/db/mongo')(config);
 
 // Set server connection port
 server.connection({
