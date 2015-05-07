@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/thoven78/quotes-api",
   "dependencies": {
+    "bell": "^2.7.0",
     "hapi": "^8.4.0",
     "joi": "^6.4.1",
     "mongoose": "^4.0.2"

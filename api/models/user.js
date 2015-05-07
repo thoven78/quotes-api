@@ -11,6 +11,7 @@ var UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  displayName: String,
   email: {
     type: String,
     required: true,
@@ -18,12 +19,14 @@ var UserSchema = new mongoose.Schema({
   },
   salt: {
     type: String,
-    required: true
+    //required: true
   },
   password: {
     type: String,
-    required: true
+    //required: true
   },
+  avatarUrl: String,
+  token: String,
   createdAt: {
     type: Date,
     required: true
