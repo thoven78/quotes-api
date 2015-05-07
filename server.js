@@ -4,15 +4,13 @@ var Hapi = require('hapi');
 
 var server = new Hapi.Server();
 
-var mongoose = require('mongoose');
-
 // Load the environment config
 var config = require(
   './config/' + (process.ENV || 'development')
 );
 
-// Set up mongodb connection
-mongoose.connect(config.db);
+// Load mongodb connection
+require('./api/db/mongo');
 
 // Set server connection port
 server.connection({
@@ -23,7 +21,10 @@ server.connection({
 require('./api/models/user');
 require('./api/models/quote');
 
-// Auth
+// Auth components
+require('./api/components/auth')(server, config);
+
+// Auth Routes
 require('./api/routes/auth')(server);
 // Users
 require('./api/routes/users')(server);
@@ -31,6 +32,6 @@ require('./api/routes/users')(server);
 require('./api/routes/quotes')(server);
 
 // Log were the serve is listening
-server.start(function() {
+server.start(function start() {
   console.log('Server running at:', server.info.uri);
 });
