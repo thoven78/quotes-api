@@ -10,16 +10,19 @@ module.exports = function quotes(server) {
     method: 'GET',
     path: '/api/quotes',
     handler: function(request, reply) {
-
       Quote.find(function all(err, docs) {
         if (err) {
-          return err;
+          return reply(err);
         }
         reply({
           quotes: docs
         });
       });
-
+    },
+    config: {
+      auth: {
+        mode: 'optional'
+      }
     }
   });
 
@@ -38,6 +41,11 @@ module.exports = function quotes(server) {
           quote: doc
         });
       });
+    },
+    config: {
+      auth: {
+        mode: 'optional'
+      }
     }
   });
 
@@ -55,6 +63,11 @@ module.exports = function quotes(server) {
         })
       });
 
+    },
+    config: {
+      auth: {
+        mode: 'optional'
+      }
     }
   });
 
@@ -147,7 +160,7 @@ module.exports = function quotes(server) {
         }).code(401);
       }
 
-      Quote.remove({_id: req.params.id}, function
+      Quote.remove({_id: req.params.id, _creator: request.auth.user._id}, function
         remove(err, doc) {
         if (err) {
           return reply({

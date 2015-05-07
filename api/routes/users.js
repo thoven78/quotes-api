@@ -18,6 +18,9 @@ module.exports = function(server) {
           first_name: Joi.string().min(2).required(),
           last_name: Joi.string().min(2).required(),
         }
+      },
+      auth: {
+        mode: 'try'
       }
     }
   });
