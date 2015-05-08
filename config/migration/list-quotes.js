@@ -12,46 +12,59 @@ db.open(function open(err, db) {
   var quot = [
     {
       'author': 'Voltaire',
-      '_creator': '554a74c6ada7b15124a2541b',
       'text': 'God gave us the gift of life; it is up to us to give ourselves the gift of living well.'
     },
     {
       'author': 'Voltaire',
-      '_creator': '554a74c6ada7b15124a2541b',
       'text': 'It is difficult to free fools from the chains they revere.'
     },
     {
       'author': 'Voltaire',
-      '_creator': '554a74c6ada7b15124a2541b',
       'text': 'With great power comes great responsability'
     }
   ];
 
-  var docs = [];
+  // TODO use async
 
-  quot.forEach(function each(doc, index) {
-    doc.createdAt = new Date(Date.now() + index * 1000);
-    docs[index] = doc;
-  });
+  var users = db.collection('users');
 
-  db.dropDatabase();
-
-  db.createCollection('quotes', function quotes(err, collection) {
+  users.find({}).toArray(function(err, docs) {
 
     if (err) {
-      return err;
+      throw(err);
     }
 
-    collection.insert(docs, {w: 1}, function(err, result) {
+    // Take the first user for now and give them the quotes
+    var user = docs[0];
+
+    var docs = [];
+
+    quot.forEach(function each(doc, index) {
+      doc.createdAt = new Date(Date.now() + index * 1000);
+      doc._creator = user._id;
+      docs[index] = doc;
+    });
+
+    db.dropDatabase();
+
+    db.createCollection('quotes', function quotes(err, collection) {
 
       if (err) {
         return err;
       }
 
-      console.log(result, 'finished');
-      db.close();
+      collection.insert(docs, {w: 1}, function(err, result) {
 
+        if (err) {
+          return err;
+        }
+
+        console.log(result, 'finished');
+        db.close();
+
+      });
     });
+
   });
 
 });
