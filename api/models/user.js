@@ -17,10 +17,6 @@ var UserSchema = new mongoose.Schema({
     required: true,
     lowercase: true
   },
-  salt: {
-    type: String,
-    //required: true
-  },
   password: {
     type: String,
     //required: true
