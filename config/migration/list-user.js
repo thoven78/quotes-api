@@ -8,19 +8,19 @@ var mongoClient = require('mongodb').MongoClient;
 
 var db = new Db('quotes-api', new Server('localhost', 27017));
 
+var bcrypt = require('bcrypt');
+
 db.open(function open(err, db) {
 
   var user = {
     firstName: 'Stevenson',
     lastName: 'Michel',
     email: 'thoven@example.com',
-    //password: , // use bcrypt
+    password: 'password1', // use bcrypt
     createdAt: new Date(),
   };
 
   db.dropDatabase();
-
-  // TODO generate the hash and store the hash and then sync
 
   db.createCollection('users', function(err, collection) {
 
@@ -28,15 +28,18 @@ db.open(function open(err, db) {
       return err;
     }
 
+    // Generate a hashed password
+    var hashSync = user.password = bcrypt.hashSync(user.password, 10);
+
     collection.insert(user, {w: 1}, function(err, result) {
 
       if (err) {
         return err;
       }
 
-      console.log(result, 'finished creating user');
       db.close();
 
     });
+
   });
 })
