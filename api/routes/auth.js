@@ -62,25 +62,26 @@ module.exports = function(server) {
 
         var password = (request.payload.password || '').trim();
 
-        bcrypt.hash(password, doc.salt, function(err, hash) {
+        var hashPass = bcrypt.hashSync(password, 10);
+
+        bcrypt.compare(hashPass, password, function(err) {
 
           if (err) {
-            throw(err);
+            return reply({
+              message: 'Wrong credentials combination'
+            }).code(404);
           }
 
-          bcrypt.compare(hash, doc.password, function(err) {
+          var user = doc;
 
-            if (err) {
-              return reply({
-                message: 'Wrong credentials combination'
-              }).code(404);
-            }
+          delete user.password;
 
-            delete doc.password;
-            delete doc.salt;
+          request.auth.session.set(doc);
 
-            request.auth.session.set(doc);
+          reply({
+            user: user
           });
+
         });
 
       });
